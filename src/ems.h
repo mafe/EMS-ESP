@@ -20,7 +20,6 @@
 #define EMS_ID_SM 0x30      // Solar Module SM10 and SM100
 #define EMS_ID_GATEWAY 0x48 // KM200 Web Gateway
 
-
 #define EMS_MIN_TELEGRAM_LENGTH 6 // minimal length for a validation telegram, including CRC
 
 // max length of a telegram, including CRC, for Rx and Tx.
@@ -40,12 +39,12 @@
 #define EMS_BOILER_BURNPOWER_TAPWATER 100
 #define EMS_BOILER_SELFLOWTEMP_HEATING 70
 
-//define maximum settable tapwater temperature, not every installation supports 90 degrees
+// define maximum settable tapwater temperature
 #define EMS_BOILER_TAPWATER_TEMPERATURE_MAX 60
 
-#define EMS_TX_TELEGRAM_QUEUE_MAX 50 // max size of Tx FIFO queue
+#define EMS_TX_TELEGRAM_QUEUE_MAX 100 // max size of Tx FIFO queue
 
-//#define EMS_SYS_LOGGING_DEFAULT EMS_SYS_LOGGING_VERBOSE
+// #define EMS_SYS_LOGGING_DEFAULT EMS_SYS_LOGGING_VERBOSE
 #define EMS_SYS_LOGGING_DEFAULT EMS_SYS_LOGGING_NONE
 
 /* EMS UART transfer status */
@@ -104,7 +103,7 @@ typedef struct {
     uint8_t                 dest;
     uint16_t                type;
     uint8_t                 offset;
-    uint8_t                 length;
+    uint8_t                 length;             // full length of complete telegram
     uint8_t                 dataValue;          // value to validate against
     uint16_t                type_validate;      // type to call after a successful Write command
     uint8_t                 comparisonValue;    // value to compare against during a validate
@@ -119,8 +118,8 @@ typedef struct {
 typedef struct {
     uint32_t  timestamp;   // timestamp from millis()
     uint8_t * telegram;    // the full data package
-    uint8_t   length;      // length in bytes of the data
-    uint8_t   full_length; // full length of the complete telegram
+    uint8_t   data_length; // length in bytes of the data
+    uint8_t   length;      // full length of the complete telegram
     uint8_t   src;         // source ID
     uint8_t   dest;        // destination ID
     uint16_t  type;        // type ID as a double byte to support EMS+
@@ -239,13 +238,17 @@ typedef struct {           // UBAParameterWW
 /*
  * Telegram package defintions for Other EMS devices
  */
+
+// SM Solar Module - SM10Monitor/SM100Monitor
 typedef struct {
-    // SM10 Solar Module - SM10Monitor
-    bool    SM;               // set true if there is a SM10 available
-    int16_t SMcollectorTemp;  // collector temp from SM10
-    int16_t SMbottomTemp;     // bottom temp from SM10
+    bool    SM;               // set true if there is a SM available
+    int16_t SMcollectorTemp;  // collector temp
+    int16_t SMbottomTemp;     // bottom temp
     uint8_t SMpumpModulation; // modulation solar pump
     uint8_t SMpump;           // pump active
+    int16_t SMEnergyLastHour;
+    int16_t SMEnergyToday;
+    int16_t SMEnergyTotal;
 } _EMS_Other;
 
 // Thermostat data

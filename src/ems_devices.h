@@ -44,6 +44,8 @@
 #define EMS_TYPE_SM10Monitor 0x97    // SM10Monitor
 #define EMS_TYPE_SM100Monitor 0x0262 // SM100Monitor
 #define EMS_TYPE_SM100Status 0x0264  // SM100Status
+#define EMS_TYPE_SM100Status2 0x026A // SM100Status2
+#define EMS_TYPE_SM100Energy 0x028E  // SM100Energy
 
 /*
  * Thermostats...
@@ -98,6 +100,11 @@
 
 // RC1010,RC310 and RC300 specific (EMS Plus)
 #define EMS_TYPE_RCPLUSStatusMessage 0x01A5       // is an automatic thermostat broadcast giving us temps
+<<<<<<< HEAD
+=======
+#define EMS_TYPE_RCPLUSSet 0x03                   // setpoint temp message - this is incorrect!
+#define EMS_OFFSET_RCPLUSStatusMessage_setpoint 3 // setpoint temp
+>>>>>>> upstream/dev
 #define EMS_OFFSET_RCPLUSStatusMessage_curr 0     // current temp
 #define EMS_OFFSET_RCPLUSStatusMessage_setpoint_standalone 0 // setpoint temp
 #define EMS_OFFSET_RCPLUSStatusMessage_setpoint 3
@@ -126,7 +133,7 @@ typedef enum {
     EMS_MODEL_BOSCHEASY,
     EMS_MODEL_RC310,
     EMS_MODEL_CW100,
-    EMS_MODEL_RC1010,
+    EMS_MODEL_1010,
     EMS_MODEL_OT
 
 } _EMS_MODEL_ID;
@@ -161,7 +168,7 @@ const _Other_Type Other_Types[] = {
     {EMS_MODEL_OTHER, 73, EMS_ID_SM, "SM10 Solar Module"},
     {EMS_MODEL_OTHER, 163, EMS_ID_SM, "SM100 Solar Module"},
     {EMS_MODEL_OTHER, 171, 0x02, "EMS-OT OpenTherm converter"},
-    {EMS_MODEL_OTHER, 252, EMS_ID_GATEWAY, "Web Gateway KM200"} // warning, fake product id!
+    {EMS_MODEL_OTHER, 189, EMS_ID_GATEWAY, "Web Gateway KM200"}
 
 };
 
@@ -180,6 +187,6 @@ const _Thermostat_Type Thermostat_Types[] = {
     {EMS_MODEL_BOSCHEASY, 206, 0x02, "Bosch Easy", EMS_THERMOSTAT_WRITE_NO},
     {EMS_MODEL_RC310, 158, 0x10, "RC300/RC310", EMS_THERMOSTAT_WRITE_NO},
     {EMS_MODEL_CW100, 255, 0x18, "Bosch CW100", EMS_THERMOSTAT_WRITE_NO},
-    {EMS_MODEL_RC1010, 165, 0x18, "RC1010/Nefit Moduline 1010", EMS_THERMOSTAT_WRITE_NO}
+    {EMS_MODEL_1010, 165, 0x18, "Nefit Moduline 1010", EMS_THERMOSTAT_WRITE_NO}
 
 };

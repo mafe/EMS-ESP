@@ -9,7 +9,7 @@
 #ifndef MyEMS_h
 #define MyEMS_h
 
-#define MYESP_VERSION "1.1.7"
+#define MYESP_VERSION "1.1.8"
 
 #include <ArduinoJson.h>
 #include <ArduinoOTA.h>
@@ -87,7 +87,7 @@ void custom_crash_callback(struct rst_info *, uint32_t, uint32_t);
 #define COLOR_BRIGHT_WHITE "\x1B[0;97m"
 
 // SPIFFS
-#define SPIFFS_MAXSIZE 600 // https://arduinojson.org/v6/assistant/
+#define SPIFFS_MAXSIZE 800 // https://arduinojson.org/v6/assistant/
 
 // CRASH
 /**
