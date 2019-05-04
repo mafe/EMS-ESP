@@ -1229,24 +1229,9 @@ void _process_EasyStatusMessage(_EMS_RxTelegram * EMS_RxTelegram) {
 void _process_RCPLUSStatusMessage(_EMS_RxTelegram * EMS_RxTelegram) {
     if (EMS_RxTelegram->offset == 0) {
         // the whole telegram
-<<<<<<< HEAD
-        // e.g.     Thermostat -> all,                      telegram: 10 00 FF 00 01 A5 00 D7 21 00 00 00 00 30 01 84 01 01 03 01 84 01 F1 00 00 11 01 00 08 63 00 (CRC=CC), #data=27
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 00 01 A5 80 00 01 2A 23 00 2A 2A 05 A0 03 03 03 05 A0 03 76 00 00 11 01 03 FF FF 00 (CRC=11), #data=24 
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 00 01 A5 80 00 01 2A 24 00 2A 2A 05 A0 03 03 03 05 A0 03 86 00 00 11 01 03 FF FF 00 (CRC=68), #data=24 // Setback threshold == 16.0
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 00 01 A5 80 00 01 2A 24 00 2A 2A 05 A0 03 03 03 05 A0 03 8E 00 00 11 01 03 FF FF 00 (CRC=A0), #data=24 // Setback threshold == 15.0
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 00 01 A5 80 00 01 2A 24 00 2A 2A 05 A0 03 03 03 05 A0 03 9A 00 00 11 01 03 FF FF 00 (CRC=4D), #data=24 // Setback threshold == 15.0  // <-- 03 9A  == same bytes like in offset == 0x19
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 00 01 A5 00 E0 21 2B 2F 00 2B 29 00 6D 03 03 03 00 6D 03 8F 00 00 11 01 03 08 BE 00 (CRC=D2), #data=24 // Heating prog.1: 1st slot: 06:00==21.5; 2nd slot:23:00==20.5
-
-        EMS_Thermostat.curr_roomTemp = _toShort(EMS_OFFSET_RCPLUSStatusMessage_curr);    // value is * 10
-        if (EMS_Thermostat.curr_roomTemp == EMS_VALUE_SHORT_NOTSET) {
-            // sensor not connected
-        }
-
-=======
         // e.g. Thermostat -> all, telegram: 10 00 FF 00 01 A5 00 D7 21 00 00 00 00 30 01 84 01 01 03 01 84 01 F1 00 00 11 01 00 08 63 00
         //                                   10 00 FF 00 01 A5 80 00 01 30 28 00 30 28 01 54 03 03 01 01 54 02 A8 00 00 11 01 03 FF FF 00
         EMS_Thermostat.curr_roomTemp     = _toShort(EMS_OFFSET_RCPLUSStatusMessage_curr);    // value is * 10
->>>>>>> upstream/dev
         EMS_Thermostat.setpoint_roomTemp = _toByte(EMS_OFFSET_RCPLUSStatusMessage_setpoint); // value is * 2
 
         // room night setpoint is _toByte(2) (value is *2)
@@ -1254,35 +1239,6 @@ void _process_RCPLUSStatusMessage(_EMS_RxTelegram * EMS_RxTelegram) {
         // day night is byte(8), 0x01 for night, 0x00 for day
     }
 
-<<<<<<< HEAD
-    if (EMS_RxTelegram->offset == 0x03) {
-        EMS_Thermostat.setpoint_roomTemp = _toByte(EMS_OFFSET_RCPLUSStatusMessage_setpoint_standalone); // value is * 2
-    }
-
-
-    // this is a temp value but not sure which one
-    // e.g.    Thermostat -> all,                      telegram: 10 00 FF 07 01 A5 32 (CRC=4E), #data=3
-    // mafe: Thermostat -> all, type 0x01A5 telegram: 10 00 FF 07 01 A5 28 (CRC=54)  setpoint to 20.0
-    // mafe: Thermostat -> all, type 0x01A5 telegram: 10 00 FF 07 01 A5 26 (CRC=5A)  setpoint to 19.0
-    if (EMS_RxTelegram->offset == 7) { // setpoint temp 2nd slot
-        // to add...
-    }
-
-    // this is a temp value but not sure which one
-    // e.g.    Thermostat -> all,                      telegram: 18 00 FF 06 01 A5 22 (CRC=64), #data=3
-    // mafe: Thermostat -> all, type 0x01A5 telegram: 10 00 FF 06 01 A5 24 (CRC=50)  // setpoint to 18.0
-    if (EMS_RxTelegram->offset == 6) { // setpoint temp 1st slot
-        // to add...
-    }
-
-    if (EMS_RxTelegram->offset == 0x19) {
-        // mafe:  Thermostat -> all, type 0x01A5 telegram: 10 00 FF 19 01 A5 06 04 00 00 00 00 FF 64 4F 00 3C 01 FF 01 02 (CRC=8A), #data=14 // does not change
-    }
-
-    // current heating mode?
-    if (EMS_RxTelegram->offset == 0x0F) {
-        // Thermostat -> all, type 0x01A5 telegram: 10 00 FF 0F 01 A5 03 76 (CRC=08)  // 0x03 could be a mode setting and did not change on my observations; last byte is count++ per minute until overflow (byte)
-=======
     // actual set point
     // e.g. Thermostat -> all, telegram: 10 00 FF 07 01 A5 32
     if (EMS_RxTelegram->offset == 7) {
@@ -1292,7 +1248,6 @@ void _process_RCPLUSStatusMessage(_EMS_RxTelegram * EMS_RxTelegram) {
     // next set point
     // e.g. Thermostat -> all, telegram: 18 00 FF 06 01 A5 22
     if (EMS_RxTelegram->offset == 6) {
->>>>>>> upstream/dev
         // to add...
     }
 }
