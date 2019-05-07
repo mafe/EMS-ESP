@@ -460,10 +460,13 @@ void showInfo() {
         myDebug("%sThermostat stats:%s", COLOR_BOLD_ON, COLOR_BOLD_OFF);
         myDebug("  Thermostat: %s", ems_getThermostatDescription(buffer_type));
         if ((ems_getThermostatModel() == EMS_MODEL_EASY) || (ems_getThermostatModel() == EMS_MODEL_BOSCHEASY)) {
-            // for easy temps are * 100
-            // also we don't have the time or mode
-            _renderShortValue("Set room temperature", "C", EMS_Thermostat.setpoint_roomTemp, 10);
-            _renderShortValue("Current room temperature", "C", EMS_Thermostat.curr_roomTemp, 10);
+            // for easy temps are * 100, also we don't have the time or mode
+            _renderShortValue("Set room temperature", "C", EMS_Thermostat.setpoint_roomTemp, 10); // *100
+            _renderShortValue("Current room temperature", "C", EMS_Thermostat.curr_roomTemp, 10); // *100
+        } else if (ems_getThermostatModel() == EMS_MODEL_FR10) {
+            // Junkers are *10
+            _renderIntValue("Set room temperature", "C", EMS_Thermostat.setpoint_roomTemp, 10); // *10
+            _renderIntValue("Current room temperature", "C", EMS_Thermostat.curr_roomTemp, 10); // *10
         } else {
             // because we store in 2 bytes short, when converting to a single byte we'll loose the negative value if its unset
             if (EMS_Thermostat.setpoint_roomTemp <= 0) {
@@ -612,13 +615,26 @@ void publishValues(bool force) {
     if (abs(EMS_Boiler.boilTemp) < EMS_VALUE_SHORT_NOTSET)
         rootBoiler["boilTemp"] = (double)EMS_Boiler.boilTemp / 10;
 
-    rootBoiler["wWActivated"] = _bool_to_char(s, EMS_Boiler.wWActivated);
-    rootBoiler["burnGas"]     = _bool_to_char(s, EMS_Boiler.burnGas);
-    rootBoiler["heatPmp"]     = _bool_to_char(s, EMS_Boiler.heatPmp);
-    rootBoiler["fanWork"]     = _bool_to_char(s, EMS_Boiler.fanWork);
-    rootBoiler["ignWork"]     = _bool_to_char(s, EMS_Boiler.ignWork);
-    rootBoiler["wWCirc"]      = _bool_to_char(s, EMS_Boiler.wWCirc);
-    rootBoiler["wWHeat"]      = _bool_to_char(s, EMS_Boiler.wWHeat);
+    if (EMS_Boiler.wWActivated != EMS_VALUE_INT_NOTSET)
+        rootBoiler["wWActivated"] = _bool_to_char(s, EMS_Boiler.wWActivated);
+
+    if (EMS_Boiler.burnGas != EMS_VALUE_INT_NOTSET)
+        rootBoiler["burnGas"] = _bool_to_char(s, EMS_Boiler.burnGas);
+
+    if (EMS_Boiler.heatPmp != EMS_VALUE_INT_NOTSET)
+        rootBoiler["heatPmp"] = _bool_to_char(s, EMS_Boiler.heatPmp);
+
+    if (EMS_Boiler.fanWork != EMS_VALUE_INT_NOTSET)
+        rootBoiler["fanWork"] = _bool_to_char(s, EMS_Boiler.fanWork);
+
+    if (EMS_Boiler.ignWork != EMS_VALUE_INT_NOTSET)
+        rootBoiler["ignWork"] = _bool_to_char(s, EMS_Boiler.ignWork);
+
+    if (EMS_Boiler.wWCirc != EMS_VALUE_INT_NOTSET)
+        rootBoiler["wWCirc"] = _bool_to_char(s, EMS_Boiler.wWCirc);
+
+    if (EMS_Boiler.wWHeat != EMS_VALUE_INT_NOTSET)
+        rootBoiler["wWHeat"] = _bool_to_char(s, EMS_Boiler.wWHeat);
 
     rootBoiler["ServiceCode"]       = EMS_Boiler.serviceCodeChar;
     rootBoiler["ServiceCodeNumber"] = EMS_Boiler.serviceCode;
@@ -660,7 +676,14 @@ void publishValues(bool force) {
 
         rootThermostat[THERMOSTAT_HC] = _int_to_char(s, EMSESP_Status.heating_circuit);
 
+        // different logic depending on thermostat types
         if ((ems_getThermostatModel() == EMS_MODEL_EASY) || (ems_getThermostatModel() == EMS_MODEL_BOSCHEASY)) {
+            if (abs(EMS_Thermostat.setpoint_roomTemp) < EMS_VALUE_SHORT_NOTSET)
+                rootThermostat[THERMOSTAT_SELTEMP] = (double)EMS_Thermostat.setpoint_roomTemp / 10;
+            if (abs(EMS_Thermostat.curr_roomTemp) < EMS_VALUE_SHORT_NOTSET)
+                rootThermostat[THERMOSTAT_CURRTEMP] = (double)EMS_Thermostat.curr_roomTemp / 10;
+
+        } else if (ems_getThermostatModel() == EMS_MODEL_FR10) {
             if (abs(EMS_Thermostat.setpoint_roomTemp) < EMS_VALUE_SHORT_NOTSET)
                 rootThermostat[THERMOSTAT_SELTEMP] = (double)EMS_Thermostat.setpoint_roomTemp / 10;
             if (abs(EMS_Thermostat.curr_roomTemp) < EMS_VALUE_SHORT_NOTSET)
@@ -681,6 +704,7 @@ void publishValues(bool force) {
 
             if (EMS_Thermostat.heatingtype != EMS_VALUE_INT_NOTSET)
                 rootThermostat[THERMOSTAT_HEATINGTYPE] = EMS_Thermostat.heatingtype;
+
             if (EMS_Thermostat.circuitcalctemp != EMS_VALUE_INT_NOTSET)
                 rootThermostat[THERMOSTAT_CIRCUITCALCTEMP] = EMS_Thermostat.circuitcalctemp;
         }
@@ -1545,7 +1569,7 @@ void initEMSESP() {
     EMSESP_Status.dallas_sensors  = 0;
     EMSESP_Status.led_gpio        = EMSESP_LED_GPIO;
     EMSESP_Status.dallas_gpio     = EMSESP_DALLAS_GPIO;
-    EMSESP_Status.heating_circuit = 1; // default heating circuit
+    EMSESP_Status.heating_circuit = 1; // default heating circuit to HC1
 
     // shower settings
     EMSESP_Shower.timerStart    = 0;
