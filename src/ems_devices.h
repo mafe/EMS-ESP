@@ -100,11 +100,6 @@
 
 // RC1010, RC310 and RC300 specific (EMS Plus)
 #define EMS_TYPE_RCPLUSStatusMessage 0x01A5       // is an automatic thermostat broadcast giving us temps
-<<<<<<< HEAD
-=======
-#define EMS_TYPE_RCPLUSSet 0x03                   // setpoint temp message
-#define EMS_OFFSET_RCPLUSStatusMessage_setpoint 3 // setpoint temp
->>>>>>> 0f4ea8d5aff2c8c4f8ea816e3cfa76af54b6f346
 #define EMS_OFFSET_RCPLUSStatusMessage_curr 0     // current temp
 #define EMS_OFFSET_RCPLUSStatusMessage_setpoint_standalone 0 // setpoint temp
 #define EMS_OFFSET_RCPLUSStatusMessage_setpoint 3
